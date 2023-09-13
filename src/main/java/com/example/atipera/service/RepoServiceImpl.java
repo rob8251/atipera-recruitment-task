@@ -1,8 +1,8 @@
 package com.example.atipera.service;
 
 import com.example.atipera.models.Branch;
-import com.example.atipera.models.Repo;
 import com.example.atipera.models.ResponseRepo;
+import com.example.atipera.models.Repo;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -20,10 +20,10 @@ public class RepoServiceImpl implements RepoService {
 
         List<ResponseRepo> responseRepos = repos.stream()
                 .map(repo -> {
-                    ResponseRepo responseRepo = new ResponseRepo();
-                    responseRepo.setName(repo.getName());
-                    responseRepo.setOwnerLogin(repo.getOwner().getLogin());
-                    responseRepo.setBranches(getBranches(username, repo.getName()).toArray(Branch[]::new));
+                    String name = repo.name();
+                    String ownerLogin = repo.owner().login();
+                    Branch[] branches = getBranches(username, repo.name()).toArray(Branch[]::new);
+                    ResponseRepo responseRepo = new ResponseRepo(name, ownerLogin, branches);
                     return responseRepo;
                 }).collect(Collectors.toList());
 
@@ -36,7 +36,7 @@ public class RepoServiceImpl implements RepoService {
         ResponseEntity<Repo[]> response = restTemplate.getForEntity(url, Repo[].class);
         List<Repo> repositories = Arrays.asList(response.getBody());
 
-        return repositories.stream().filter(repo -> !repo.getFork()).toList();
+        return repositories.stream().filter(repo -> !repo.fork()).toList();
     }
 
     public List<Branch> getBranches(String username, String repo) {
