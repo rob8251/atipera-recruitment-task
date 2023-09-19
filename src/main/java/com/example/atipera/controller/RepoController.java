@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -24,9 +25,9 @@ public class RepoController {
     }
 
     @GetMapping("/api/v1/{username}")
-    public ResponseEntity<List<ResponseRepo>> getReposByUsername(@PathVariable("username") String username) {
+    public ResponseEntity<Flux<ResponseRepo>> getReposByUsername(@PathVariable("username") String username) {
 
-        List<ResponseRepo> responseRepos = repoService.getReposInfo(username);
+        Flux<ResponseRepo> responseRepos = repoService.getReposInfo(username);
         return ResponseEntity.status(HttpStatus.OK).body(responseRepos);
     }
 
